@@ -17,46 +17,15 @@ void    my_mlx_pixel_put(t_data *data, int x, int y, int color)
     *(unsigned int *)dst = color;
 }
 
-
-int main(void)
+void    ft_vila(void *mlx, void *mlx_win, t_data img)
 {
-    void    *mlx;
-    void    *mlx_win;
-    t_data  img;
-    int     x;
-    int     y;
-
-
-    x = 0;
-    y = 0;
-    // INICIA A MILILIBX //
-    mlx = mlx_init();
+    int draw  = 150;
     
-    // CRIA UMA JANELA DE TAMANHO DEFINIDO E NOMEIA ESSA JANELA //
-    mlx_win = mlx_new_window(mlx, 650, 550, "Hello world!");
-    
-    img.img = mlx_new_image(mlx, 650, 550);
-    
-       
-    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-   
-    while (x <= 50)
-    {
-        y = 0;
-        while (y <= 50)
-        {
-            my_mlx_pixel_put(&img, x, y, 0x00ff0000);
-            y++;
-        }
-        x++;
-    }
-
     mlx_put_image_to_window(mlx, mlx_win, img.img, 150, 100);
     mlx_put_image_to_window(mlx, mlx_win, img.img, 450, 100);
     mlx_put_image_to_window(mlx, mlx_win, img.img, 200, 150);
     mlx_put_image_to_window(mlx, mlx_win, img.img, 400, 150);
    
-    int draw  = 150;
     while (draw <= 450)
     {
         mlx_put_image_to_window(mlx, mlx_win, img.img, draw, 200);
@@ -97,9 +66,46 @@ int main(void)
         draw += 50;
     }
 
+}
+int main(void)
+{
+    void    *mlx;
+    void    *mlx_win;
+    t_data  img;
+    int     x;
+    int     y;
+
+
+    x = 0;
+    y = 0;
+    // INICIA A MILILIBX //
+    mlx = mlx_init();
     
+    // CRIA UMA JANELA DE TAMANHO DEFINIDO E NOMEIA ESSA JANELA //
+    mlx_win = mlx_new_window(mlx, 650, 550, "Exterminadores de Bugs");
+    
+    // CRIA UMA NOVA IMAGEM QUE SERÁ JOGADA NA JANELA //
+    img.img = mlx_new_image(mlx, 650, 550);
+    
+    // Get data atribuirá os valores de bpp, line lenght e endian adequados para aquela imagem //    
+    img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+   
+    // Nesta função um pixel é escrito na imagem na cordenada apontada por x e y. Esse loop fará com que um quadrado de 50 pixels seja escrito //
+    while (x <= 50)
+    {
+        y = 0;
+        while (y <= 50)
+        {
+            my_mlx_pixel_put(&img, x, y, 0x00ff0000);
+            y++;
+        }
+        x++;
+    }
+    
+    // ESTA FUNÇÃO FARÁ COM QUE A IMAGEM ESCRITA SEJA JOGADA NA JANELA. NESTE CASO O DESENHO SERÁ O SIMBOLO DA MINHA VILA //
+    ft_vila(mlx, mlx_win, img);    
     
     // DEIXA A JANELA EM LOOP //
-     mlx_loop(mlx);
+    mlx_loop(mlx);
 
 }
