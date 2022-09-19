@@ -1,4 +1,6 @@
 #include "mlx/mlx.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct  s_data 
 {
@@ -8,6 +10,12 @@ typedef struct  s_data
     int     line_length;
     int     endian;
 }               t_data;
+
+typedef struct	s_vars
+{
+	void	*mlx;
+	void	*win;
+}				t_vars;
 
 void    my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -67,6 +75,25 @@ void    ft_vila(void *mlx, void *mlx_win, t_data img)
     }
 
 }
+
+int	close_win_x(t_vars *vars)
+{
+	mlx_destroy_window(vars->mlx, vars->win);
+	exit(0);
+	return (0);
+}
+
+
+int	close_win(int keycode, t_vars *vars)
+{
+	if (keycode == 53)
+	{
+		mlx_destroy_window(vars->mlx, vars->win);
+		exit(0);
+	}
+	return (0);
+}
+
 int main(void)
 {
     void    *mlx;
@@ -74,7 +101,7 @@ int main(void)
     t_data  img;
     int     x;
     int     y;
-
+	t_vars	vars;
 
     x = 0;
     y = 0;
@@ -83,7 +110,10 @@ int main(void)
     
     // CRIA UMA JANELA DE TAMANHO DEFINIDO E NOMEIA ESSA JANELA //
     mlx_win = mlx_new_window(mlx, 650, 550, "Exterminadores de Bugs");
-    
+
+	vars.mlx = mlx;
+	vars.win = mlx_win;
+
     // CRIA UMA NOVA IMAGEM QUE SERÁ JOGADA NA JANELA //
     img.img = mlx_new_image(mlx, 650, 550);
     
@@ -105,7 +135,12 @@ int main(void)
     // ESTA FUNÇÃO FARÁ COM QUE A IMAGEM ESCRITA SEJA JOGADA NA JANELA. NESTE CASO O DESENHO SERÁ O SIMBOLO DA MINHA VILA //
     ft_vila(mlx, mlx_win, img);    
     
+	// HOOKANDO O ESC //
+		
+	mlx_hook(vars.win, 17, 0, close_win_x, &vars);
+	mlx_hook(vars.win, 2, 0, close_win, &vars);
     // DEIXA A JANELA EM LOOP //
-    mlx_loop(mlx);
+
+	mlx_loop(vars.mlx);
 
 }
