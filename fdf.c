@@ -1,67 +1,78 @@
 #include "libft/libft.h"
 
-int count_map_line(char *str)
+typedef struct s_map
 {
-    int fd;
-    int i;
+    int **map_array;
+    int *lines;
+    int *columns;
+} t_map;
 
-    i = 0;
+int map_lines(char *str)
+{
+    int     line_counter;
+    int     fd;
+    
+    line_counter = 0;
     fd = open(str, O_RDONLY);
-    while (get_next_line(fd) && fd != -1)
-        i++;
-    close(fd);
-    if (!i)
-        exit(1);
-    return (i);
+    while (get_next_line(fd))
+        line_counter++;
+    return(line_counter);
 }
 
-int **map_array(char **lines, int map_lines)
+void    fill_map_array(char *line, int *map_array, int *columns)
 {
-    int     x;
-    int     y;
-    char    **temp;
-    int     **array;
-    int     count;
-    
-    array = malloc (map_lines * sizeof (int *));
-    y = 0;
-    while (map_lines--)
-    {
-        x = 0;
-        count = 0;
-        temp = ft_split(lines[y], ' ');
-        while (temp[x++])
-            count++;
-        x = count;
-        array[y] = malloc (count * sizeof (int));
-        while (count)
-            array[y][--count] = ft_atoi (temp[--x]);
-        y++;
-        // LEMBRAR DE DAR FREE NO TEMP //
-    }
-    return (array); 
-} 
+    char    **splitted_line;
+    int     i;
 
+    i = 0;
+    splitted_line = ft_split(line, ' ');
+    while (splitted_line[i])
+        i++;
+    if (!(*columns))
+        *columns = i;
+    free(splitted_line[i--]);
+    map_array = malloc(i * sizeof(int));
+    while (i)
+    {
+        map_array[i] = ft_atoi(splitted_line[i]); 
+        free(splitted_line[i--]);
+    }
+    free(splitted_line);
+    free(line);
+}
+
+void    map_read(char *str, t_map map_info)
+{
+    int     fd;
+    char    *line;
+    int     i;
+
+    i = 0;
+    *map_info.lines = map_lines(str);
+    fd = open(str, O_RDONLY);
+    if (fd == -1 || *map_info.lines == 0)
+        exit(1);
+    map_info.map_array = malloc((*map_info.lines) * sizeof(int *));
+    while (i < (*map_info.lines))
+    {
+        line = get_next_line(fd);
+        fill_map_array(line, map_info.map_array[i++], map_info.columns);
+    }
+    close(fd);
+}
 
 int main (int argc, char **argv)
 {
-    int     fd;
-    char    **lines;
-    int     i;
-    int     **map;
+    t_map map_info;
 
     if (argc == 2)
     {
-        i = 0;
-        fd = open(argv[1] , O_RDONLY);
-        lines = malloc(count_map_line(argv[1]) * sizeof (char *)); 
-        while (1 && fd != -1)
-        {
-            lines[i] = get_next_line(fd);
-            if (!lines[i++])
-                break;
-        }
-        // LEMBRAR DE DAR FREE EM LINES //
-        map = map_array(lines, count_map_line(argv[1]));
+        map_info.lines = malloc(sizeof(int)); 
+        map_info.columns = malloc(sizeof(int)); 
+        ft_bzero(&(*map_info.lines), sizeof (int));
+        ft_bzero(&(*map_info.columns), sizeof (int));
+        map_read(argv[1], map_info);
+        ft_printf("%i\n", *map_info.lines);
+        ft_printf("%i\n", *map_info.columns);
     }
 }
