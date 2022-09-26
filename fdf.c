@@ -43,9 +43,11 @@ void creating_window(int **map_array, t_map map_info)
         y = 0;
         while (y < *map_info.columns)
         {
-            if (map_array[x][y] > 0)
+			if (map_array[x][y] > 0)
                 my_mlx_pixel_put(&img, 30*y, 30*x, 0x00ff0000);
-            else
+			else if (map_array[x][y] < 0)
+                my_mlx_pixel_put(&img, 30*y, 30*x, 0x0000ff88);
+			else
                 my_mlx_pixel_put(&img, 30*y, 30*x, 0x0056ffff);
             y++;
         }
