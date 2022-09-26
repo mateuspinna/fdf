@@ -1,5 +1,6 @@
 LFTPATH     = ./libft
 LIBFT       = $(LFTPATH)/libft.a
+MLX			= ./mlx/libmlx.a
 MLX_FLAGS	= -Lmlx -lmlx -framework OpenGL -framework AppKit
 CC = cc
 FLAGS = -Wall -Wextra -Werror
@@ -10,7 +11,7 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) *.c $(LIBFT) -Lmlx $(MLX_FLAGS) -o $(NAME)
+	@$(CC) *.c $(LIBFT) $(LIBS)-Lmlx $(MLX_FLAGS) -o $(NAME)
 
 %.o: %.c
 	@$(CC) -c $(FLAGS) -o $@ $<
@@ -32,6 +33,6 @@ cleanlib:
 re: fclean all
 
 lldb: re $(OBJS)
-	$(CC) $(FLAGS) -g $(SRCS) $(LIBFT) -o $(NAME) $(MLX_FLAGS)
+	$(CC) $(FLAGS) -g $(SRCS) $(LIBFT) $(LIBS) -o $(NAME) $(MLX_FLAGS)
 
 .PHONY = re all clean fclean lldb
